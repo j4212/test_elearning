@@ -1,0 +1,55 @@
+version: '3'
+
+services:
+  app:
+    container_name: simaku-api
+    environment:
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_NAME=${DB_NAME}
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - DB_SSLMODE=${DB_SSLMODE}
+      - JWT_SECRET=${JWT_SECRET}
+      - R2_BUCKET=${R2_BUCKET}
+      - R2_ACCOUNT_ID=${R2_ACCOUNT_ID}
+      - R2_KEY=${R2_KEY}
+      - R2_SECRET=${R2_SECRET}
+      - R2_PUB=${R2_PUB}
+        
+    build: .
+    ports:
+      - 8082:8082 
+    restart: on-failure
+    depends_on: 
+      - postgresdb
+    networks: 
+      simaku_net:
+        ipv4_address: 10.10.10.4
+
+  postgresdb:
+    image: postgres:16-alpine
+    container_name: simaku-elearning-db 
+    ports:
+      - 5432:5432
+    volumes:
+      - ~/_simaku_pg:/var/lib/postgresql/data1
+    environment:
+       POSTGRES_USER: ${DB_USER}
+       POSTGRES_PASSWORD: ${DB_PASSWORD}
+       POSTGRES_DB: ${DB_NAME}
+    networks:
+      simaku_net:
+        ipv4_address: 10.10.10.3
+
+networks: 
+  simaku_net:
+    driver: bridge
+    ipam: 
+      config:
+        - subnet: 10.10.10.0/24
+          gateway: 10.10.10.1
+
+
+volumes:
+  _simaku_pg:

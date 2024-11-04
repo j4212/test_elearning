@@ -1,0 +1,9 @@
+# Ignore Neovim Cache 
+.null**
+
+# Ignore .env 
+.env
+
+temp/
+
+.vscode
